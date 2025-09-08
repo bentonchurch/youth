@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "scripts": {
+    "start": "npx vite public/",
+    "build": "npx vite build",
+    "lint": "npx prettier ./public --write"
+  },
+  "dependencies": {
+    "prettier": "3.3.3",
+    "vite": "^6.3.5"
+  }
+}
