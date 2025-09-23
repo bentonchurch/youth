@@ -1,0 +1,30 @@
+
+body {
+  background: white;
+  color: black;
+  font-family: 'Orbitron', sans-serif;
+  text-align: center;
+  padding: 2rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: 3rem;
+  font-weight: bold;
+  background: linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbowFlow 5s linear infinite, spin 8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes rainbowFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
