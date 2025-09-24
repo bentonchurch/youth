@@ -1,5 +1,5 @@
 export default {
-  base: 'youth',
+  base: '/youth/',
   root: './public',
   build: {
     outDir: '../build',
