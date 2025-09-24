@@ -1,8 +1,13 @@
 export default {
   base: '/youth/',
-  root: './public',
   build: {
-    outDir: '../build',
-    emptyOutDir: true
+    outDir: 'build',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        jakob: 'Jakob.html'
+      }
+    }
   }
 }
