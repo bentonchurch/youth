@@ -1,13 +1,17 @@
-export default {
-  base: '/youth/',
+import { defineConfig } from 'vite'
+import { resolve } from 'path'
+
+export default defineConfig({
+  base: '/youth/', // must match your repo name
   build: {
     outDir: 'build',
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: 'index.html',
-        jakob: 'Jakob.html'
+        main: resolve(__dirname, 'index.html'),
+        jakob: resolve(__dirname, 'jakob/index.html'),
       }
     }
   }
-}
+})
+
