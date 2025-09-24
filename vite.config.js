@@ -10,6 +10,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         jakob: resolve(__dirname, 'jakob/index.html'),
+        countryfacts: resolve(__dirname, 'countryfacts/index.html'),
       }
     }
   }
