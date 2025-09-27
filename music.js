@@ -1,4 +1,4 @@
-const audio = document.getElementById('bgm');
+const audio = new Audio('https://twobplay.pages.dev/bgm.mp3');
   
 // Try autoplay immediately (may fail silently)
 audio.play().catch(() => {
