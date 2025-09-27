@@ -27,19 +27,7 @@
     <source src="https://twobplay.pages.dev/bgm.mp3" type="audio/mpeg">
   </audio>
 
-  <script>
-  const audio = document.getElementById('bgm');
-  
-  // Try autoplay immediately (may fail silently)
-  audio.play().catch(() => {
-    console.log("Autoplay blocked, waiting for user interaction.");
-  });
-
-  // Play when user clicks anywhere
-  document.body.addEventListener('click', () => {
-    audio.play();
-  }, { once: true });
-  </script>
+  <script src="../music.js"></script>
 </body>
 
 </html>
