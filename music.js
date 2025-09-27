@@ -1,4 +1,6 @@
 const audio = new Audio('https://twobplay.pages.dev/bgm.mp3');
+
+audio.loop = true;
   
 // Try autoplay immediately (may fail silently)
 audio.play().catch(() => {
