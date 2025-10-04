@@ -20,19 +20,21 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
-    }
-
     .video-card {
+      width: 640px; /* fixed card width */
       background: white;
       border-radius: 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       overflow: hidden;
+      margin: 0 auto; /* center on small screens */
     }
 
+    .video-grid {
+      display: flex;       /* use flex instead of grid */
+      flex-wrap: wrap;     /* allow multiple rows */
+      justify-content: center; /* center all cards */
+      gap: 20px;
+    }
 
     .video-info {
       padding: 10px;
@@ -52,7 +54,6 @@
     .video-wrapper {
       width: 640px;
       height: 480px;
-      margin: 0 auto;
       overflow: hidden;
       background: black; /* optional, in case video doesn’t fully fill */
     }
