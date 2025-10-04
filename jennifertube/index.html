@@ -12,6 +12,17 @@
       padding: 20px;
     }
 
+    .header {
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 10px 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
     .video-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -26,8 +37,11 @@
     }
 
     .video-card video {
-      width: 100%;
+      width: 640px;
+      height: 480px;
+      object-fit: cover; /* keeps it cropped nicely if aspect ratio doesn't match */
       display: block;
+      margin: 0 auto; /* centers it inside the card */
     }
 
     .video-info {
@@ -47,6 +61,11 @@
   </style>
 </head>
 <body>
+
+  <div class="header">
+    <img src="../media/jennifertube.png" alt="JenniferTube">
+  </div>
+  
   <div class="video-grid">
 
     <div class="video-card">
@@ -77,6 +96,46 @@
       <div class="video-info">
         <div class="video-title">Throwing Jennifer down a Hill</div>
         <div class="video-meta">JenniferFoundFootage • 15.2M views • 2 years ago</div>
+      </div>
+    </div>
+    
+    <div class="video-card">
+      <video controls>
+        <source src="../media/jennifer/eowyn_4_video_20250929_160002_934.mp4" type="video/mp4">
+      </video>
+      <div class="video-info">
+        <div class="video-title">The Aftermath</div>
+        <div class="video-meta">JenniferFoundFootage • 1.5K views • 2 years ago</div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <video controls>
+        <source src="../media/jennifer/eowyn_5_video_20250929_160002_945.mp4" type="video/mp4">
+      </video>
+      <div class="video-info">
+        <div class="video-title">Jennifer Found Footage #5</div>
+        <div class="video-meta">JenniferFoundFootage • 3.1K views • 2 years ago</div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <video controls>
+        <source src="../media/jennifer/eowyn_6_video_20250929_160002_958.mp4" type="video/mp4">
+      </video>
+      <div class="video-info">
+        <div class="video-title">DESTRUCTION OF JENNIFER</div>
+        <div class="video-meta">JenniferFoundFootage67 • 69.7M views • 2 years ago</div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <video controls>
+        <source src="../media/jennifer/eowyn_7_video_20250929_160002_949.mp4" type="video/mp4">
+      </video>
+      <div class="video-info">
+        <div class="video-title">Here's a Souvenir</div>
+        <div class="video-meta">JenniferGoesWHACKO • 500K views • 2 years ago</div>
       </div>
     </div>
 
