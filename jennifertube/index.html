@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JenniferTube</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .video-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .video-card video {
+      width: 100%;
+      display: block;
+    }
+
+    .video-info {
+      padding: 10px;
+    }
+
+    .video-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .video-meta {
+      color: #555;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="video-grid">
+
+    <div class="video-card">
+      <video controls>
+        <source src="../media/jennifer/eowyn_1_video_20250929_160002_926.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div class="video-info">
+        <div class="video-title">Jakob Races on Jennifer</div>
+        <div class="video-meta">Eowyn • 1.2M views • 2 years ago</div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <video controls>
+         <source src="../media/jennifer/eowyn_2_video_20250929_160002_894.mp4" type="video/mp4">
+      </video>
+      <div class="video-info">
+        <div class="video-title">Jennifer Race #2</div>
+        <div class="video-meta">JenniferFoundFootage • 8.7K views • 2 years ago</div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <video controls>
+        <source src="../media/jennifer/eowyn_3_video_20250929_160002_917.mp4" type="video/mp4">
+      </video>
+      <div class="video-info">
+        <div class="video-title">Throwing Jennifer down a Hill</div>
+        <div class="video-meta">JenniferFoundFootage • 15.2M views • 2 years ago</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
