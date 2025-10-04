@@ -54,15 +54,15 @@
     .video-wrapper {
       width: 640px;
       height: 480px;
-      object-fit: contain;
       overflow: hidden;
-      background: black; /* optional, in case video doesn’t fully fill */
+      background: black;
+      margin: 0 auto;
     }
 
     .video-wrapper video {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* fills the container without stretching */
+      object-fit: contain;
       display: block;
     }
 
