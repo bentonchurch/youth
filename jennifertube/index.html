@@ -36,8 +36,11 @@
     .video-card video {
       width: 640px;
       height: 480px;
-      margin: 0 auto; /* centers it inside the card */
+      margin: 0 auto;
+      object-fit: cover; /* prevents weird stretching */
+      display: block;
     }
+
 
     .video-info {
       padding: 10px;
