@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which Youth Grouper Are You?</title>
+<style>
+  .question { margin-bottom: 20px; }
+  button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  #result { margin-top: 20px; font-size: 20px; font-weight: bold; color: #2a9d8f; }
+</style>
+</head>
+<body>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="../favicon.ico">
+<link rel="stylesheet" href="../styles.css">
+
+<h1>Which Youth Grouper Are You?</h1>
+
+<div class="question">
+  <p>1. What is the best pickle flavor?</p>
+  <label><input type="radio" name="q1" value="Dill"> Dill</label><br>
+  <label><input type="radio" name="q1" value="Herman’s"> Herman’s</label><br>
+  <label><input type="radio" name="q1" value="Pickle Juice"> Pickle Juice</label><br>
+  <label><input type="radio" name="q1" value="Kevin’s Meat Pickles"> Kevin’s Meat Pickles</label>
+</div>
+
+<div class="question">
+  <p>2. What is the best liquid?</p>
+  <label><input type="radio" name="q2" value="Milk"> Milk</label><br>
+  <label><input type="radio" name="q2" value="Crude Oil"> Crude Oil</label><br>
+  <label><input type="radio" name="q2" value="Olive Oil"> Olive Oil</label><br>
+  <label><input type="radio" name="q2" value="Coca Cola"> Coca Cola</label><br>
+  <label><input type="radio" name="q2" value="Pepsi"> Pepsi</label><br>
+  <label><input type="radio" name="q2" value="7-UP"> 7-UP</label>
+</div>
+
+<div class="question">
+  <p>3. Who is the best YouTuber?</p>
+  <label><input type="radio" name="q3" value="MrBeast"> MrBeast</label><br>
+  <label><input type="radio" name="q3" value="Twobbular"> Twobbular</label><br>
+  <label><input type="radio" name="q3" value="Poopoo Nugget Gaming"> Poopoo Nugget Gaming</label>
+</div>
+
+<div class="question">
+  <p>4. What is the best game?</p>
+  <label><input type="radio" name="q4" value="Minecraft"> Minecraft</label><br>
+  <label><input type="radio" name="q4" value="Steal a Brainrot"> Steal a Brainrot</label><br>
+  <label><input type="radio" name="q4" value="Monopoly"> Monopoly</label><br>
+  <label><input type="radio" name="q4" value="Mario 64"> Mario 64</label>
+</div>
+
+<div class="question">
+  <p>5. Best number?</p>
+  <label><input type="radio" name="q5" value="69"> 69</label><br>
+  <label><input type="radio" name="q5" value="21"> 21</label><br>
+  <label><input type="radio" name="q5" value="67"> 67</label><br>
+  <label><input type="radio" name="q5" value="41"> 41</label><br>
+  <label><input type="radio" name="q5" value="29"> 29</label>
+</div>
+
+<div class="question">
+  <p>6. What gender are you?</p>
+  <label><input type="radio" name="q6" value="Male"> Male</label><br>
+  <label><input type="radio" name="q6" value="Female"> Female</label>
+</div>
+
+<div class="question">
+  <p>7. Opinion on Jakob?</p>
+  <label><input type="radio" name="q7" value="Good"> Good</label><br>
+  <label><input type="radio" name="q7" value="Bad"> Bad</label><br>
+  <label><input type="radio" name="q7" value="Sigma"> Sigma</label><br>
+  <label><input type="radio" name="q7" value="Dumb"> Dumb</label>
+</div>
+
+<button onclick="submitQuiz()">Submit</button>
+
+<div id="result"></div>
+
+<script>
+function submitQuiz() {
+  const answers = [];
+  for (let i = 1; i <= 7; i++) {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    if (!selected) {
+      alert("Please answer all questions!");
+      return;
+    }
+    answers.push(selected.value);
+  }
+
+  // Updated list of names
+  const names = [
+    "Bald Steve", "Harry", "Jakob", "Jakob 2.0", "Jakob 2.0 5000",
+    "Eli", "Kyden", "Kiden", "Flo", "Flumbo",
+    "Raden", "Raymond", "Matteah", "Matteo", "Arturo",
+    "Ethan", "Tera"
+  ];
+
+  // Pick random name
+  const randomName = names[Math.floor(Math.random() * names.length)];
+
+  // Display result
+  document.getElementById("result").innerText = `You are ${randomName}!`;
+}
+</script>
+
+</body>
+</html>
