@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youth Group 3D</title>
+    <!-- Load Tailwind CSS for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Three.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* Custom styles for the game environment */
+        body {
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbars */
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a2e; /* Dark background */
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        /* Styles for the persistent version text */
+        #version-display {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            text-shadow: 1px 1px 2px #000000;
+            z-index: 100;
+            pointer-events: none; /* Allows clicks to pass through to the game */
+        }
+        /* Styles for the Title Screen Overlay */
+        #title-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            z-index: 50; /* Above the canvas, below the version number */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-in-out;
+        }
+        /* Button style using Tailwind */
+        .game-button {
+            padding: 1rem 3rem;
+            margin-top: 2rem;
+            background: linear-gradient(145deg, #6a0dad, #8a2be2); /* Purple gradient */
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(106, 13, 173, 0.4);
+            transition: all 0.2s ease;
+        }
+        .game-button:hover {
+            background: linear-gradient(145deg, #8a2be2, #6a0dad);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.6);
+        }
+        .game-button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(106, 13, 173, 0.3);
+        }
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            text-shadow: 0 0 10px #8a2be2;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Persistent Version Display -->
+    <div id="version-display">version Omicron 0.0</div>
+
+    <!-- Title Screen Overlay -->
+    <div id="title-screen">
+        <h1 class="text-white mb-4">Youth Group 3D</h1>
+        <button id="start-button" class="game-button">
+            START GAME
+        </button>
+        <!-- Text update applied here -->
+        <p class="mt-8 text-gray-400">Click to enter the chaos.</p>
+    </div>
+
+    <!-- The Three.js Canvas will be injected here -->
+
+    <script>
+        // --- Game Variables ---
+        let scene, camera, renderer;
+        let clock = new THREE.Clock(); // For time-based movements/updates
+
+        // Player variables for movement and physics
+        let player; // Global reference to the player Mesh
+        let moveSpeed = 8; // Units per second
+        let jumpVelocity = 15;
+        let velocityY = 0;
+        const gravity = -30; // Units per second squared
+        const groundLevel = 0.5; // Player stands at Y=0.5 (half player height)
+        const playerHalfSize = 0.5; // Player is 1x1x1 cube
+
+        // Array to store collision boxes for static environment objects
+        let staticPlatforms = []; 
+
+        // Movement state tracking (Keys pressed)
+        let keyState = {
+            'w': false,
+            'a': false,
+            's': false,
+            'd': false,
+            ' ': false // Spacebar
+        };
+
+        // --- Core Functions ---
+
+        /**
+         * Initializes the Three.js scene, camera, and renderer.
+         */
+        function initScene() {
+            // 1. Scene Setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x3a0050); // Deep purple background
+
+            // 2. Camera Setup (Perspective Camera for 3D)
+            const fov = 75;
+            const aspect = window.innerWidth / window.innerHeight;
+            const near = 0.1;
+            const far = 1000;
+            camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+            // Initial camera position. It will be updated to follow the player later.
+            camera.position.set(0, 5, 10); 
+            camera.lookAt(0, 0, 0); 
+
+            // 3. Renderer Setup
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            // Append the renderer's canvas to the document body
+            document.body.appendChild(renderer.domElement);
+
+            // 4. Lighting
+            // Ambient light provides soft, global illumination
+            const ambientLight = new THREE.AmbientLight(0x404040, 2); // soft white light
+            scene.add(ambientLight);
+
+            // Directional light mimics the sun (provides shadows/highlights)
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 10, 7.5);
+            scene.add(directionalLight);
+
+            // 5. Add Game Objects (The Environment)
+            createPlatforms();
+
+            // 6. Event Listeners
+            window.addEventListener('resize', onWindowResize, false);
+            document.addEventListener('keydown', onKeyDown, false);
+            document.addEventListener('keyup', onKeyUp, false);
+        }
+
+        /**
+         * Creates the initial platforms/ground for the platformer and initializes the player.
+         */
+        function createPlatforms() {
+            // The main ground platform (30x30 units)
+            const groundGeometry = new THREE.BoxGeometry(30, 1, 30);
+            const groundMaterial = new THREE.MeshLambertMaterial({ color: 0x00aa00 }); // Green for ground
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.position.y = -0.5; // Set the top of the ground at y=0
+            scene.add(ground);
+
+            // A simple elevated platform (5x1x5 units) - The Blue Box
+            const platformGeometry = new THREE.BoxGeometry(5, 1, 5);
+            const platformMaterial = new THREE.MeshLambertMaterial({ color: 0x0077aa }); // Blue platform
+            const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+            platform.position.set(5, 2, 0);
+            scene.add(platform);
+
+            // Store platform data for collision detection (AABB)
+            // Platform size is 5x1x5 centered at (5, 2, 0)
+            staticPlatforms.push({
+                minX: platform.position.x - 2.5, maxX: platform.position.x + 2.5,
+                minY: platform.position.y - 0.5, maxY: platform.position.y + 0.5,
+                minZ: platform.position.z - 2.5, maxZ: platform.position.z + 2.5,
+            });
+
+            // Placeholder for the player (A red cube)
+            const playerGeometry = new THREE.BoxGeometry(1, 1, 1);
+            const playerMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 }); // Red player
+            player = new THREE.Mesh(playerGeometry, playerMaterial); // Assign to global player variable
+            player.position.set(0, groundLevel, 0); // Start player on the ground
+            scene.add(player);
+        }
+
+        /**
+         * Handles keyboard key press events.
+         */
+        function onKeyDown(event) {
+            const key = event.key.toLowerCase();
+            if (keyState.hasOwnProperty(key)) {
+                keyState[key] = true;
+                // Prevent default browser scroll on spacebar press
+                if (key === ' ') {
+                    event.preventDefault();
+                }
+            }
+        }
+
+        /**
+         * Handles keyboard key release events.
+         */
+        function onKeyUp(event) {
+            const key = event.key.toLowerCase();
+            if (keyState.hasOwnProperty(key)) {
+                keyState[key] = false;
+            }
+        }
+
+        /**
+         * Handles window resizing to keep the 3D scene responsive.
+         */
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        /**
+         * The main game loop for updating and rendering the scene.
+         */
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+
+            if (player) {
+                // --- 1. Pre-calculate the new position based on input and physics ---
+                const newPlayerPos = player.position.clone();
+                let onGround = false;
+
+                // A. Apply Horizontal Movement (WASD)
+                let moveX = 0;
+                let moveZ = 0;
+
+                if (keyState['w']) { moveZ -= 1; }
+                if (keyState['s']) { moveZ += 1; }
+                if (keyState['a']) { moveX -= 1; }
+                if (keyState['d']) { moveX += 1; }
+
+                let horizontalMove = new THREE.Vector2(0, 0);
+                if (moveX !== 0 || moveZ !== 0) {
+                    horizontalMove = new THREE.Vector2(moveX, moveZ).normalize();
+                    newPlayerPos.x += horizontalMove.x * moveSpeed * delta;
+                    newPlayerPos.z += horizontalMove.y * moveSpeed * delta;
+                }
+
+                // B. Apply Gravity and Vertical Movement
+                velocityY += gravity * delta;
+                newPlayerPos.y += velocityY * delta;
+
+                // --- 2. Collision Checks ---
+
+                // Check collision with the main ground (Y=0 boundary)
+                if (newPlayerPos.y <= groundLevel) {
+                    newPlayerPos.y = groundLevel;
+                    velocityY = 0;
+                    onGround = true;
+                }
+
+                // Check collision with elevated platforms (Blue Box)
+                for (const platform of staticPlatforms) {
+                    // Check for horizontal overlap: X & Z boundaries
+                    const x_overlap = newPlayerPos.x + playerHalfSize > platform.minX && newPlayerPos.x - playerHalfSize < platform.maxX;
+                    const z_overlap = newPlayerPos.z + playerHalfSize > platform.minZ && newPlayerPos.z - playerHalfSize < platform.maxZ;
+                    
+                    if (x_overlap && z_overlap) {
+                        // Check for vertical collision (Landing/Standing)
+                        if (velocityY <= 0 && player.position.y - playerHalfSize >= platform.maxY && newPlayerPos.y - playerHalfSize < platform.maxY) {
+                            // Landed on the platform top
+                            newPlayerPos.y = platform.maxY + playerHalfSize; // Snap player to the platform top
+                            velocityY = 0;
+                            onGround = true;
+                        }
+
+                        // Check for vertical overlap (player is at the same height as the platform)
+                        const vertical_overlap = newPlayerPos.y + playerHalfSize > platform.minY && newPlayerPos.y - playerHalfSize < platform.maxY;
+
+                        // Check for horizontal side collisions (only block if player is not currently standing on the platform)
+                        if (vertical_overlap && !onGround) {
+                            // To prevent clipping, we reset movement based on axis.
+                            // X collision: Check if player would hit platform on X axis
+                            if (player.position.x + playerHalfSize <= platform.minX || player.position.x - playerHalfSize >= platform.maxX) {
+                                // We are trying to move into it horizontally, so block the X movement
+                                if (newPlayerPos.x + playerHalfSize > platform.minX && newPlayerPos.x - playerHalfSize < platform.maxX) {
+                                     newPlayerPos.x = player.position.x; // Revert X move
+                                }
+                            }
+                            // Z collision: Check if player would hit platform on Z axis
+                            if (player.position.z + playerHalfSize <= platform.minZ || player.position.z - playerHalfSize >= platform.maxZ) {
+                                // We are trying to move into it horizontally, so block the Z movement
+                                if (newPlayerPos.z + playerHalfSize > platform.minZ && newPlayerPos.z - playerHalfSize < platform.maxZ) {
+                                     newPlayerPos.z = player.position.z; // Revert Z move
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // --- 3. Apply the calculated position and check jump ---
+                player.position.copy(newPlayerPos);
+
+                // Handle Jump Input
+                if (keyState[' '] && onGround) {
+                    velocityY = jumpVelocity;
+                    onGround = false; // Player is now airborne
+                }
+                
+                // --- 4. Simple Camera Follow ---
+                // Keep the camera positioned relative to the player
+                const cameraOffset = new THREE.Vector3(0, 5, 10);
+                
+                // Calculate the target camera position based on the player's position and the offset
+                const targetCameraPosition = player.position.clone().add(cameraOffset);
+                
+                // Use linear interpolation (lerp) for smoother camera movement
+                camera.position.lerp(targetCameraPosition, 0.1); 
+                
+                // Keep the camera looking at the player
+                camera.lookAt(player.position.x, player.position.y + 1, player.position.z);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        /**
+         * Starts the game by hiding the title screen and starting the animation loop.
+         */
+        function startGame() {
+            const titleScreen = document.getElementById('title-screen');
+            // Fade out the title screen
+            titleScreen.style.opacity = '0';
+            setTimeout(() => {
+                titleScreen.style.display = 'none';
+                // Request focus on the document body so keyboard input works immediately
+                document.body.focus(); 
+                animate(); // Start the 3D rendering loop
+            }, 500); // Wait for the fade out transition
+        }
+
+        // --- Event Listeners & Initial Setup ---
+        window.onload = function() {
+            // Initialize the 3D scene only after the window has fully loaded
+            initScene();
+            
+            const startButton = document.getElementById('start-button');
+            startButton.addEventListener('click', startGame);
+
+            // Ensure the canvas is correctly sized initially
+            onWindowResize();
+        };
+
+    </script>
+</body>
+</html>
