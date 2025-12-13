@@ -47,6 +47,7 @@
             justify-content: center;
             align-items: center;
             transition: opacity 0.5s ease-in-out;
+            cursor: pointer; /* Indicate clickability for music */
         }
         /* Button style using Tailwind */
         .game-button {
@@ -81,7 +82,7 @@
 <body>
 
     <!-- Persistent Version Display -->
-    <div id="version-display">version Omicron 0.0</div>
+    <div id="version-display">version Omicron 0.1</div>
 
     <!-- Title Screen Overlay -->
     <div id="title-screen">
@@ -89,9 +90,21 @@
         <button id="start-button" class="game-button">
             START GAME
         </button>
-        <!-- Text update applied here -->
-        <p class="mt-8 text-gray-400">Click to enter the chaos.</p>
+        <!-- Text updated to guide user interaction for music -->
+        <p class="mt-8 text-gray-400">Click the button to enter the Chaos.</p>
     </div>
+
+    <!-- Background Music Element (Title Screen) -->
+    <audio id="bgm-audio" loop>
+        <source src="https://bentonchurch.github.io/youth/media/bgm.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Background Music Element (Gameplay) -->
+    <audio id="gameplay-audio" loop>
+        <source src="https://bentonchurch.github.io/youth/media/Dream%20Speedrun%20Music%20but%20its%20Kazoo.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
 
     <!-- The Three.js Canvas will be injected here -->
 
@@ -120,6 +133,9 @@
             'd': false,
             ' ': false // Spacebar
         };
+
+        // State to track if title music has successfully started
+        let isTitleMusicPlaying = false; 
 
         // --- Core Functions ---
 
@@ -341,9 +357,21 @@
         }
 
         /**
-         * Starts the game by hiding the title screen and starting the animation loop.
+         * Starts the game by hiding the title screen, stopping the title music, and starting the animation loop.
          */
         function startGame() {
+            // 1. Handle Music
+            const bgm = document.getElementById('bgm-audio');
+            const gameplayAudio = document.getElementById('gameplay-audio');
+            
+            bgm.pause(); // Stop title music
+            bgm.currentTime = 0; // Rewind title music
+            
+            gameplayAudio.volume = 0.4; // Set volume for gameplay
+            gameplayAudio.play().catch(e => console.log('Gameplay music start prevented.', e)); // Start gameplay music
+
+
+            // 2. Handle Screen Transition
             const titleScreen = document.getElementById('title-screen');
             // Fade out the title screen
             titleScreen.style.opacity = '0';
@@ -360,7 +388,23 @@
             // Initialize the 3D scene only after the window has fully loaded
             initScene();
             
+            const bgm = document.getElementById('bgm-audio');
+            const titleScreen = document.getElementById('title-screen');
             const startButton = document.getElementById('start-button');
+            
+            bgm.volume = 0.5;
+
+            // 1. Title Screen Click Handler (Starts music, ignores button clicks)
+            titleScreen.addEventListener('click', function(event) {
+                // If the click target is NOT the start button AND music isn't already playing
+                if (event.target.id !== 'start-button' && !isTitleMusicPlaying) {
+                    bgm.play().then(() => {
+                        isTitleMusicPlaying = true;
+                    }).catch(e => console.log('Music start prevented.', e));
+                }
+            });
+
+            // 2. Attach game start only to the dedicated button
             startButton.addEventListener('click', startGame);
 
             // Ensure the canvas is correctly sized initially
