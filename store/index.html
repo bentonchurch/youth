@@ -13,14 +13,19 @@
   <h2><a href="https://bentonchurch.github.io/youth/">Home</a></h2><h2><h2><a href="https://bentonchurch.github.io/youth/jakob/">Jakob</a></h2><h2><a href="https://bentonchurch.github.io/youth/CountryFacts/">Country Facts</a></h2><h2><a href="https://bentonchurch.github.io/youth/YouthGroup64/">Youth Group 64</a></h2><h2><a href="https://bentonchurch.github.io/youth/youthgroupchronicle">News</a></h2>
   <p>Welcome to the Youth Store! We have several products you may purchase! However, you must pay with YouthCoin.</p>
 
-  <p>Your YouthCoin Balance: <span id="balance">0</span> YC</p>
+  <p>Your YouthCoin Balance: <span id="balance">0</span> Youth Coin</p>
 
   <button onclick="addCoins()">Add YouthCoin to your balance</button>
 
+  <h3>Store Items:</h3>
+  <ul id="store">
+    <!-- Items will be added here dynamically -->
+  </ul>
+    
   <script>
     // Initialize balance if not already set
     if (localStorage.getItem("youthCoinBalance") === null) {
-      localStorage.setItem("youthCoinBalance", "500"); // starting balance
+      localStorage.setItem("youthCoinBalance", "0"); // starting balance
     }
 
     // Update the balance display
@@ -35,9 +40,39 @@
       balance += 100; // add 100 coins
       localStorage.setItem("youthCoinBalance", balance);
       updateBalanceDisplay();
-      alert("You received 100 YouthCoin!");
+      alert("We have taken $1,000,000 from your bank account and converted it into 100 Youth Coin.");
     }
+     // Store items array
+    const storeItems = [
+      { name: "Jakob Plush", price: 1 },
+      { name: "George", price: 9999 },
+      { name: "Jennifer (remains)", price: 99999999 },
+      { name: "Hyab's Hits (album)", price: 67 }
+    ];
 
+    // Render store items
+    const storeList = document.getElementById("store");
+    storeItems.forEach((item, index) => {
+      const li = document.createElement("li");
+      li.innerHTML = `${item.name} - ${item.price} YouthCoin <button onclick="buyItem(${index})">Buy</button>`;
+      storeList.appendChild(li);
+    });
+
+    // Buy item function
+    function buyItem(index) {
+      let balance = Number(localStorage.getItem("youthCoinBalance"));
+      const item = storeItems[index];
+
+      if (balance < item.price) {
+        alert("Not enough YouthCoin!");
+        return;
+      }
+
+      balance -= item.price;
+      localStorage.setItem("youthCoinBalance", balance);
+      updateBalanceDisplay();
+      alert(`You bought a ${item.name}!`);
+    }
     // Initial display
     updateBalanceDisplay();
   </script>
