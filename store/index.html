@@ -17,7 +17,6 @@
 
   <button onclick="addCoins()">Add YouthCoin to your balance</button>
 
-  <h3>Store Items:</h3>
   <ul id="store">
     <!-- Items will be added here dynamically -->
   </ul>
@@ -47,7 +46,8 @@
       { name: "Jakob Plush", price: 1 },
       { name: "George", price: 9999 },
       { name: "Jennifer (remains)", price: 99999999 },
-      { name: "Hyab's Hits (album)", price: 67 }
+      { name: "Hyab's Hits (album)", price: 67 },
+      { name: "Jakob's Tonsils", price: 69 }
     ];
 
     // Render store items
@@ -71,7 +71,7 @@
       balance -= item.price;
       localStorage.setItem("youthCoinBalance", balance);
       updateBalanceDisplay();
-      alert(`You bought a ${item.name}!`);
+      alert(`You bought ${item.name}!`);
     }
     // Initial display
     updateBalanceDisplay();
